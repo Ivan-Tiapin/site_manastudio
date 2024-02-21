@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+      {% for asset in assets %}
+        <div class="row h-100">
+          {% comment %} Image {% endcomment %}
+          <div class="col-8 text-center">
+            <div>
+                <img src="{{ asset.image.url}}" class="img-fluid" style = "height:400px">
+            </div>
+          </div>
+          {% comment %} Text information about asset {% endcomment %}
+          <div class="col-4 bg-white d-flex flex-column" style = 'height:400px'>
+            <div style = 'height: 25px; overflow: auto; flex-shrink: 0;'>
+                Name:{{ asset.name }}
+            </div>
+            <div  style = 'overflow-y:auto; flex-grow:1; margin-bottom: 5px;'>
+                Description:
+                <p>{{asset.description}}</p>
+            </div>
+            <div style = 'flex-shrink: 0; margin-bottom: 5px;' class="d-grid gap-2">
+                
+                {% comment %} Authenticated user view {% endcomment %}
+                {% if user.is_authenticated %}
+                  {% if asset in saved_assets %}
+                    <div class = 'col text-center'>
+                      Asset is already in your Library
+                    </div>
+                  {% else %}
+                    <form method="post" >
+                      {% csrf_token %}
+                      <input type="hidden" name="asset_id" value="{{ asset.id }}">        
+                      <button type="submit" class="btn btn-primary d-block w-100">Add to library</button>
+                    </form>
+                  {% endif%}
+                
+                {% comment %} Site staff user view {% endcomment %}
+                  {% if perms.site_core.view_librarydb %}
+                    <a href="{% url 'asset_update' asset.id %}" class="btn btn-primary d-block w-100">Edit name, description, asset file</a>                
+                    <form action="{% url 'asset_delete' asset.id %}?next={{ request.path }}" method="post" >
+                        {% csrf_token %}
+                        <input type="hidden" name="asset_id" value="{{ asset.id }}">
+                        <!-- Use the same classes for the button to match the link's style -->
+                        <button type="submit" class="btn btn-danger d-block w-100">Delete from database</button>
+                    </form>
+                  {% endif%}
+                {% else %}
+                <div class="row">
+                  <div class = 'col text-center'>
+                  Please Log in or Sign up to add asset to your Library
+                  </div>
+                </div>
+                  <div class="row gx-3">
+                    <div class="col">
+                      <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary d-block w-100">Log in</a>  
+                    </div>
+                    <div class="col">
+                      <a href="{% url 'sign_up' %}?next={{ request.path }}" class="btn btn-primary d-block w-100">Sign up</a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+          </div>
+        </div>
+      <p>
+      {% endfor %}
+</div>
+{% endblock %}

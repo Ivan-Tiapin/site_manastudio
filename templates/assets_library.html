@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+      {% for asset in assets %}
+      <div class="row h-100">
+        {% comment %} Image {% endcomment %}
+        <div class="col-8 text-center">
+          <div>
+              <img src="{{ asset.image.url}}" class="img-fluid" style = "height:400px">
+          </div>
+        </div>
+        {% comment %} Text information about asset {% endcomment %}
+        <div class="col-4 bg-white d-flex flex-column" style = 'height:400px'>
+          <div style = 'height: 25px; overflow: auto; flex-shrink: 0;'>
+              Name:{{ asset.name }}
+          </div>
+          <div  style = 'overflow-y:auto; flex-grow:1; margin-bottom: 5px;'>
+              Description:
+              <p>{{asset.description}}</p>
+          </div>
+          <div style = 'flex-shrink: 0; margin-bottom: 5px;' class="d-grid gap-2">
+
+            
+              {% comment %} Authenticated user view {% endcomment %}
+
+              <form method="post" >
+                {% csrf_token %}
+                <input type="hidden" name="asset_id" value="{{ asset.id }}">
+                <button type="submit" class="btn btn-danger d-block w-100">Remove from library</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <p>
+            {% endfor %}
+{% endblock %}
