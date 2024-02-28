@@ -4,9 +4,9 @@ from django.contrib.auth.views import LoginView
 from .forms import RegistrationFrom, AssetsDBForm
 from .models import AssetsDB, LibraryDB
 from django.views.decorators.http import require_POST
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 
-# Authentication magagement
+# Authentication management
 def sign_up(request):
     if request.method == "POST":
         form = RegistrationFrom(request.POST)
@@ -30,6 +30,7 @@ class CustomLoginView(LoginView):
 
 # Asset management
 @login_required
+@permission_required('site_core.view_librarydb',login_url='/')
 def asset_add(request):
     form = AssetsDBForm()
     if request.method == 'POST':
@@ -44,7 +45,7 @@ def assets_all(request):
         id = request.POST.get('asset_id')
         asset = get_object_or_404(AssetsDB, pk=id)
         LibraryDB.objects.create(user=request.user, asset=asset)
-    assets = AssetsDB.objects.all()
+    assets = AssetsDB.objects.all().order_by('id')
     context = {'assets' : assets}
 
     if request.user.is_authenticated:
@@ -53,6 +54,7 @@ def assets_all(request):
     return render(request, 'assets_all.html', context)   
 
 @login_required
+@permission_required('site_core.view_librarydb',login_url='/')
 def asset_update(request,id):
     asset = get_object_or_404(AssetsDB, pk=id)
     if request.method == 'POST':
@@ -67,6 +69,7 @@ def asset_update(request,id):
     return render(request, 'asset_update.html', context)
 
 @login_required
+@permission_required('site_core.view_librarydb',login_url='/')
 @require_POST
 def asset_delete(request,id):
     asset = AssetsDB.objects.get(pk=id)
@@ -87,3 +90,6 @@ def assets_library(request):
             saved_asset.delete() 
     assets = LibraryDB.objects.filter(user = user)
     return render(request, 'assets_library.html', {'assets': [el.asset for el in assets]}) 
+
+def test(request):
+    return render (request,'test.html')

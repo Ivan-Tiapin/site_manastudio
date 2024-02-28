@@ -6,7 +6,7 @@ from django.conf.urls.static import static
 urlpatterns = [ 
     
     path('',views.assets_all,name = 'assets_all'),
-    # Athentication management
+    # Authentication management
     path('login/', views.CustomLoginView.as_view(), name = "login"),
     path('sign_up/', views.sign_up, name='sign_up'),
     # Assets management
@@ -15,4 +15,5 @@ urlpatterns = [
     path('asset_delete/<int:id>',views.asset_delete,name = 'asset_delete'),
     # User library
     path('assets_library/',views.assets_library,name = 'assets_library'),
+    path('test/', views.test, name='test')
 ]

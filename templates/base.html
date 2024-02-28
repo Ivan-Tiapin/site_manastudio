@@ -26,8 +26,11 @@
             <li class="nav-item">
               <a class="nav-link" aria-current="/page" href = '/assets_library'>Library</a>
             </li>
-          </ul>
           {% if user.is_authenticated %}
+            {% if perms.site_core.view_librarydb %}
+              <a class="nav-link" aria-current="/page" href = '/asset_add'>Add asset to database</a>
+            {% endif %}
+          </ul> 
           <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 {{user.username}}
@@ -36,8 +39,8 @@
               {% csrf_token %}
               <button type="submit" class="btn btn-secondary text-nowrap">Log out</button>
             </form>
-
           </div>
+
             {% else %}
             {% comment %} Shows link on loggin and sign up pages for anonymous user {% endcomment %}
           </ul>
